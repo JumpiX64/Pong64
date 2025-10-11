@@ -1,7 +1,7 @@
 # Pong64
 
 Pong64 is a port of the classic Pong game that runs on a real Nintendo 64 console.
-The project was created as an experiment in low-level programming, C development, and the open-source framework Libdragon.
+The project was created as an experiment in low-level programming, C development, and the open-source SDK Libdragon.
 The goal was to understand the fundamentals of hardware-level code while gaining practical experience with the N64 architecture.
 
 The ROM has a resolution of 640x480 pixels and has been tested on a PAL N64 console with an Everdrive X7. An Expansion Pak is recommended.
