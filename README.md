@@ -38,6 +38,7 @@ However, I have already uploaded the finished ROM, so it can be played directly 
 - On the start screen, a ball bounces on the Pong sprites
 - The ball speeds up after hitting the wall 5 times
 - Uses the Libdragon font
+- A victory screen with a trophy texture
 
 ## Control Settings
 - Press Start to start the Two-player mode using both controller ports of the N64
