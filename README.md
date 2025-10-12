@@ -17,7 +17,7 @@ Install the latest libdragon `preview` branch:
 <https://github.com/DragonMinded/libdragon/tree/preview>
 
 - Running this ROM requires real hardware or an accurate emulator
-- Emulators like ares or gopher64 are accurate.
+- Emulator like ares is accurate
 
 Then run:
 ```sh
