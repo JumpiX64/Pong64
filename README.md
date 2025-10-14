@@ -16,6 +16,8 @@ The ROM has a resolution of 640x480 pixels and has been tested on a PAL N64 cons
 Install the latest libdragon `preview` branch:
 <https://github.com/DragonMinded/libdragon/tree/preview>
 
+***It works fine with both trunk and preview***
+
 - Running this ROM requires real hardware or an accurate emulator
 - Emulator like ares is accurate
 
