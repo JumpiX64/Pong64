@@ -37,7 +37,7 @@ int main(void)
     sprite_t *ball = sprite_load("rom:/ball.sprite");
     sprite_t *pongf = sprite_load("rom:/pongf.sprite");
     sprite_t *pokal = sprite_load("rom:/pokal.sprite");
-    sprite_t *logol = sprite_load("rom:/logol.sprite");
+    sprite_t *lib = sprite_load("rom:/lib.sprite");
     sprite_t *endless = sprite_load("rom:/endless.sprite");
 
     float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.01f;
@@ -61,7 +61,7 @@ int main(void)
         switch(state)
         {
             case STATE_LOGO:
-                graphics_draw_sprite_trans(disp, 10, 25, logol);
+                graphics_draw_sprite_trans(disp, 10, 25, lib);
                 logo_frame_cnt++;
 
                 if (logo_frame_cnt > logo_max_frames) {
