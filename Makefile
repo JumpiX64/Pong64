@@ -1,57 +1,40 @@
-all: pong.z64
-.PHONY: all clean
-
 BUILD_DIR = build
-ROMFS_DIR = filesystem
-
-SRC = pong.c
-OBJS = $(SRC:%.c=$(BUILD_DIR)/%.o)
-DEPS = $(SRC:%.c=$(BUILD_DIR)/%.d)
-
-ROMFS_FILES = $(ROMFS_DIR)/libdragon-font.sprite
-
 include $(N64_INST)/include/n64.mk
 
-$(ROMFS_DIR)/libdragon-font.sprite: $(ROMFS_DIR)/libdragon-font.png
-	$(N64_ROOTDIR)/bin/mksprite -s 16x16 -b 8 $< $@
+SRC = pong.c
+assets_png = $(wildcard assets/*.png)
 
-$(ROMFS_DIR)/ball.sprite: $(ROMFS_DIR)/ball.png
-	$(N64_ROOTDIR)/bin/mksprite -s 16x16 -b 8 $< $@
+assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite)))
 
-$(ROMFS_DIR)/pong1.sprite: $(ROMFS_DIR)/pong1.png
-	$(N64_ROOTDIR)/bin/mksprite -s 64x64 -b 8 $< $@
+MKSPRITE_FLAGS ?=
 
-$(ROMFS_DIR)/pong2.sprite: $(ROMFS_DIR)/pong2.png
-	$(N64_ROOTDIR)/bin/mksprite -s 64x64 -b 8 $< $@
+all: pong.z64
 
-$(ROMFS_DIR)/pongf.sprite: $(ROMFS_DIR)/pongf.png
-	$(N64_ROOTDIR)/bin/mksprite -s 64x64 -b 8 $< $@
+filesystem/%.sprite: assets/%.png
+        @mkdir -p $(dir $@)
+        @echo "    [SPRITE] $@"
+        @$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
-$(ROMFS_DIR)/pokal.sprite: $(ROMFS_DIR)/pokal.png
-	$(N64_ROOTDIR)/bin/mksprite -s 32x32 -b 8 $< $@
+filesystem/pong1.sprite filesystem/pong2.sprite filesystem/pongf.sprite filesystem/lib.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 64,$
+filesystem/pokal.sprite filesystem/endless.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 32,32
+filesystem/ball.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
+filesystem/libdragon-font.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
 
-$(ROMFS_DIR)/logol.sprite: $(ROMFS_DIR)/logol.png
-	$(N64_ROOTDIR)/bin/mksprite -s 32x32 -b 8 $< $@
+$(BUILD_DIR)/pong.dfs: $(assets_conv)
+        @mkdir -p $(BUILD_DIR)
+        $(N64_ROOTDIR)/bin/mkdfs $@ filesystem
 
-$(ROMFS_DIR)/endless.sprite: $(ROMFS_DIR)/endless.png
-	$(N64_ROOTDIR)/bin/mksprite -s 32x32 -b 8 $< $@
+$(BUILD_DIR)/pong.elf: $(SRC:%.c=$(BUILD_DIR)/%.o)
 
-$(BUILD_DIR)/pong.dfs: $(ROMFS_FILES)
-	@mkdir -p $(BUILD_DIR)
-	$(N64_ROOTDIR)/bin/mkdfs $@ $(ROMFS_DIR)
-
-pong.z64: N64_ROM_TITLE = "pong"
+pong.z64: N64_ROM_TITLE="Pong"
 pong.z64: $(BUILD_DIR)/pong.dfs
 
-$(BUILD_DIR)/pong.elf: $(OBJS)
-
 clean:
-	rm -rf $(BUILD_DIR) *.z64
+        rm -rf $(BUILD_DIR) filesystem *.z64
 
-.PHONY: clean
-
--include $(DEPS)
 -include $(wildcard $(BUILD_DIR)/*.d)
+
+.PHONY: all clean
 
 
 
