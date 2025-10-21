@@ -15,7 +15,7 @@ filesystem/%.sprite: assets/%.png
         @echo "    [SPRITE] $@"
         @$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -o filesystem "$<"
 
-filesystem/pong1.sprite filesystem/pong2.sprite filesystem/pongf.sprite filesystem/lib.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 64,$
+filesystem/pong1.sprite filesystem/pong2.sprite filesystem/pongf.sprite filesystem/lib.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 64,64
 filesystem/pokal.sprite filesystem/endless.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 32,32
 filesystem/ball.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
 filesystem/libdragon-font.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
