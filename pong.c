@@ -17,6 +17,12 @@ typedef enum {
     STATE_VICTORY
 } GameState;
 
+#define CHANNEL_MUSIC   0
+#define CHANNEL_SFX1    1
+#define CHANNEL_SFX2    2
+#define CHANNEL_SFX3    3
+#define CHANNEL_SFX4    4
+
 int main(void)
 {
     int score_p1 = 0;
@@ -24,11 +30,15 @@ int main(void)
     int wall_hits = 0;
     GameState state = STATE_LOGO;
 
-    display_init(RESOLUTION_640x480, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_RESAMPLE);
+    display_init(RESOLUTION_640x480, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_DISABLED);
     dfs_init(DFS_DEFAULT_LOCATION);
     controller_init();
     timer_init();
 
+    audio_init(22050, 2);  
+    mixer_init(8);
+    
+    wav64_init_compression(3);
     sprite_t *custom_font = sprite_load("rom:/libdragon-font.sprite");
     graphics_set_font_sprite(custom_font);
 
@@ -38,9 +48,22 @@ int main(void)
     sprite_t *pongf = sprite_load("rom:/pongf.sprite");
     sprite_t *pokal = sprite_load("rom:/pokal.sprite");
     sprite_t *lib = sprite_load("rom:/lib.sprite");
-    sprite_t *endless = sprite_load("rom:/endless.sprite");
 
-    float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.01f;
+    wav64_t title_music;
+    wav64_open(&title_music, "rom:/menu.wav64");
+    wav64_set_loop(&title_music, true);
+    
+    wav64_t sfx_hit;     
+    wav64_t sfx_victory;
+    wav64_t sfx_score;
+    wav64_open(&sfx_hit, "rom:/hit.wav64");
+    wav64_open(&sfx_victory, "rom:/victory.wav64");
+    wav64_open(&sfx_score, "rom:/score.wav64");
+    
+    bool music_playing = false;
+    bool victory_sound_played = false;
+
+    float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.011f;
     int ground_y = 325, top_y = 1, top_pause_frames = 0, max_top_pause = 6;
     int logo_frame_cnt = 0, logo_max_frames = 60, fade_duration = 10;
 
@@ -57,6 +80,20 @@ int main(void)
         controller_scan();
         struct controller_data keys_pressed = get_keys_pressed();
         struct controller_data held = get_keys_held();
+
+        bool should_play_music = (state == STATE_TITLE || 
+                                   state == STATE_RULES || 
+                                   state == STATE_ENDLESS || 
+                                   state == STATE_GAME2);
+        
+        if (should_play_music && !music_playing) {
+            wav64_play(&title_music, CHANNEL_MUSIC);
+            mixer_ch_set_vol(CHANNEL_MUSIC, 0.5f, 0.5f);
+            music_playing = true;
+        } else if (!should_play_music && music_playing) {
+            mixer_ch_stop(CHANNEL_MUSIC);
+            music_playing = false;
+        }
 
         switch(state)
         {
@@ -112,11 +149,12 @@ int main(void)
                 break;
 
             case STATE_ENDLESS:
-                graphics_draw_text(disp, 250, 250, "Endless Mode");
-                graphics_draw_text(disp, 100, 300, "Coming soon!");
-                graphics_draw_text(disp, 100, 350, "Press L to return to Title");
-                graphics_draw_text(disp, 250, 400, "Highscore: ");
-                graphics_draw_sprite_trans(disp, 100, 0, endless);
+                graphics_draw_text(disp, 250, 50, "Endless Mode");
+                graphics_draw_text(disp, 100, 150, "Coming soon!");
+                graphics_draw_text(disp, 100, 200, "Press L to return to Title");
+                graphics_draw_text(disp, 150, 250, "Highscore: ");
+                graphics_draw_text(disp, 170, 400, "Developed by JumpiX");
+
 
                 if (keys_pressed.c[0].L) state = STATE_TITLE;
                 break;
@@ -171,16 +209,21 @@ int main(void)
                 ball_game_x += ball_dx;
                 ball_game_y += ball_dy;
 
-                if (ball_game_y <= 40 || ball_game_y >= 440) { ball_dy = -ball_dy; wall_hits++; }
+                if (ball_game_y <= 40 || ball_game_y >= 440) { 
+                    ball_dy = -ball_dy; 
+                    wall_hits++;
+                }
                 if (ball_game_x <= 60 && ball_game_y + 20 >= pong1_y && ball_game_y <= pong1_y + 60) {
                     ball_game_x = 60;
                     ball_dx = -ball_dx;
                     ball_dy += (ball_game_y - (pong1_y + 30)) / 10.0f;
+                    wav64_play(&sfx_hit, CHANNEL_SFX1);
                 }
                 if (ball_game_x >= 500 && ball_game_y + 20 >= pong2_y && ball_game_y <= pong2_y + 60) {
                     ball_game_x = 500;
                     ball_dx = -ball_dx;
                     ball_dy += (ball_game_y - (pong2_y + 30)) / 10.0f;
+                    wav64_play(&sfx_hit, CHANNEL_SFX2);
                 }
 
                 if (wall_hits >= 5) {
@@ -191,11 +234,13 @@ int main(void)
 
                 if (ball_game_x < 0) {
                     score_p2++;
+                    wav64_play(&sfx_score, CHANNEL_SFX4);
                     if (score_p2 >= 5) state = STATE_VICTORY;
                     else { ball_game_x = 320; ball_game_y = 240; ball_dx = 4; ball_dy = 0; }
                 }
                 if (ball_game_x > 640) {
                     score_p1++;
+                    wav64_play(&sfx_score, CHANNEL_SFX4);
                     if (score_p1 >= 5) state = STATE_VICTORY;
                     else { ball_game_x = 320; ball_game_y = 240; ball_dx = -4; ball_dy = 0; }
                 }
@@ -207,19 +252,27 @@ int main(void)
             break;
 
             case STATE_VICTORY:
+                if (!victory_sound_played) {
+                    wav64_play(&sfx_victory, CHANNEL_SFX1);
+                    victory_sound_played = true;
+                }
+                
                 if (score_p1 >= 5) graphics_draw_text(disp, 220, 200, "Player 1 Wins!");
                 else if (score_p2 >= 5) graphics_draw_text(disp, 220, 200, "Player 2 Wins!");
 
                 graphics_draw_sprite_trans(disp, 320, 150, pokal);
                 graphics_draw_text(disp, 120, 250, "Press L to return to Title");
 
-                if (keys_pressed.c[0].L) state = STATE_TITLE;
+                if (keys_pressed.c[0].L) {
+                    state = STATE_TITLE;
+                    victory_sound_played = false; 
+                }
                 break;
         }
 
+        mixer_try_play();
         display_show(disp);
     }
 
     return 0;
 }
-
