@@ -20,7 +20,6 @@ typedef enum {
 #define CHANNEL_MUSIC   0
 #define CHANNEL_SFX1    1
 #define CHANNEL_SFX2    2
-#define CHANNEL_SFX3    3
 #define CHANNEL_SFX4    4
 
 int main(void)
@@ -32,13 +31,14 @@ int main(void)
 
     display_init(RESOLUTION_640x480, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_DISABLED);
     dfs_init(DFS_DEFAULT_LOCATION);
-    controller_init();
+    joypad_init(); 
     timer_init();
 
-    audio_init(22050, 2);  
+    audio_init(22050, 2); 
     mixer_init(8);
     
     wav64_init_compression(3);
+
     sprite_t *custom_font = sprite_load("rom:/libdragon-font.sprite");
     graphics_set_font_sprite(custom_font);
 
@@ -53,17 +53,19 @@ int main(void)
     wav64_open(&title_music, "rom:/menu.wav64");
     wav64_set_loop(&title_music, true);
     
-    wav64_t sfx_hit;     
+    wav64_t sfx_hit;
     wav64_t sfx_victory;
-    wav64_t sfx_score;
+    wav64_t sfx_score; 
     wav64_open(&sfx_hit, "rom:/hit.wav64");
     wav64_open(&sfx_victory, "rom:/victory.wav64");
     wav64_open(&sfx_score, "rom:/score.wav64");
     
     bool music_playing = false;
     bool victory_sound_played = false;
+    int rumble_p1_frames = 0; 
+    int rumble_p2_frames = 0;
 
-    float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.011f;
+    float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.01f;
     int ground_y = 325, top_y = 1, top_pause_frames = 0, max_top_pause = 6;
     int logo_frame_cnt = 0, logo_max_frames = 60, fade_duration = 10;
 
@@ -78,6 +80,7 @@ int main(void)
         graphics_set_color(0xFFFFFFFF, 0x0);
 
         controller_scan();
+        joypad_poll();
         struct controller_data keys_pressed = get_keys_pressed();
         struct controller_data held = get_keys_held();
 
@@ -218,12 +221,20 @@ int main(void)
                     ball_dx = -ball_dx;
                     ball_dy += (ball_game_y - (pong1_y + 30)) / 10.0f;
                     wav64_play(&sfx_hit, CHANNEL_SFX1);
+                    if (joypad_get_rumble_supported(JOYPAD_PORT_1)) {
+                        joypad_set_rumble_active(JOYPAD_PORT_1, true);
+                        rumble_p1_frames = 16;
+                    }
                 }
                 if (ball_game_x >= 500 && ball_game_y + 20 >= pong2_y && ball_game_y <= pong2_y + 60) {
                     ball_game_x = 500;
                     ball_dx = -ball_dx;
                     ball_dy += (ball_game_y - (pong2_y + 30)) / 10.0f;
                     wav64_play(&sfx_hit, CHANNEL_SFX2);
+                    if (joypad_get_rumble_supported(JOYPAD_PORT_2)) {
+                        joypad_set_rumble_active(JOYPAD_PORT_2, true);
+                        rumble_p2_frames = 16;
+                    }
                 }
 
                 if (wall_hits >= 5) {
@@ -265,14 +276,29 @@ int main(void)
 
                 if (keys_pressed.c[0].L) {
                     state = STATE_TITLE;
-                    victory_sound_played = false; 
+                    victory_sound_played = false;
                 }
                 break;
+        }
+
+        if (rumble_p1_frames > 0) {
+            rumble_p1_frames--;
+            if (rumble_p1_frames == 0) {
+                joypad_set_rumble_active(JOYPAD_PORT_1, false);
+            }
+        }
+
+        if (rumble_p2_frames > 0) {
+            rumble_p2_frames--;
+            if (rumble_p2_frames == 0) {
+                joypad_set_rumble_active(JOYPAD_PORT_2, false);
+            }
         }
 
         mixer_try_play();
         display_show(disp);
     }
-
+    
     return 0;
 }
+
