@@ -45,6 +45,7 @@ However, I have already uploaded the finished ROM, so it can be played directly 
 - Playing a sound when one of the players gain a point
 - Sound at the victory screen
 - Sound when the ball collides with the player
+- Rumble Pak support the controller vibrates when the ball hits the player
 
 ## Control Settings
 - Press Start to start the Two-player mode using both controller ports of the N64
@@ -55,4 +56,3 @@ However, I have already uploaded the finished ROM, so it can be played directly 
 
 ## Future Features
 - Endless mode: try to achieve the highest score, but the twist is that the opponent becomes faster and stronger over time
-- Rumble Pak support
