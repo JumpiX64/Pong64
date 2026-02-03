@@ -24,9 +24,14 @@ filesystem/%.wav64: assets/%.wav
 	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -o filesystem "$<"
 
 filesystem/pong1.sprite filesystem/pong2.sprite filesystem/pongf.sprite filesystem/lib.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 64,64
-filesystem/pokal.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 32,32
+filesystem/pokal.sprite filesystem/endless.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 32,32
 filesystem/ball.sprite:  MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
 filesystem/libdragon-font.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
+
+filesystem/menu.wav64: AUDIOCONV_FLAGS=--wav-compress 1,bits=3 --wav-resample 22050 --wav-mono
+filesystem/hit.wav64: AUDIOCONV_FLAGS=--wav-compress 1,bits=3 --wav-resample 22050 --wav-mono
+filesystem/victory.wav64: AUDIOCONV_FLAGS=--wav-compress 1,bits=3 --wav-resample 22050 --wav-mono
+filesystem/score.wav64: AUDIOCONV_FLAGS=--wav-compress 1,bits=3 --wav-resample 22050 --wav-mono
 
 $(BUILD_DIR)/pong.dfs: $(assets_conv)
 	@mkdir -p $(BUILD_DIR)
