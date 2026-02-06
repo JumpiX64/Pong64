@@ -30,7 +30,7 @@ Or run for WSL 0.2.1:
 make clean && make
 ```
 This will create a `pong.z64` file.
-However, I have already uploaded the finished ROM, so it can be played directly on an emulator or used with any N64 flash cartridge, such as the Everdrive 64 X7.
+However, I have already uploaded the finished ROM on the Releases, so it can be played directly on an emulator or used with any N64 flash cartridge, such as the Everdrive 64 X7.
 
 
 ## Features
