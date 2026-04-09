@@ -48,13 +48,14 @@ However, I have already uploaded the finished ROM on the Releases, so it can be 
 - Sound when the ball collides with the player
 - Rumble Pak support the controller vibrates when the ball hits the player
 - Runs at a steady 50 FPS on original PAL N64 hardware during gameplay
-- Optional FPS counter can be enabled for debugging, but may slightly slow down gameplay; recommended to play without it for smoother performance
+- Optional FPS counter can be enabled for debugging, but it cause slowdowns during gameplay; recommended to play without it for smoother performance
 
 ## Control Settings
 - Press Start to start the Two-player mode using both controller ports of the N64
 - Use the N64 analog stick to move the Pong sprite up and down
 - Press Z to get Multiplayer COM: with selectable difficulty levels easy, normal, or hard
 - Press R for the rules
+- Press D-Pad Down for FPS counter
 - **Still in development** Press A for endless Mode
 
 ## Future Features
