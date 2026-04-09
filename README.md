@@ -48,6 +48,7 @@ However, I have already uploaded the finished ROM on the Releases, so it can be 
 - Sound when the ball collides with the player
 - Rumble Pak support the controller vibrates when the ball hits the player
 - Runs at a steady 50 FPS on original PAL N64 hardware during gameplay
+- Optional FPS counter can be enabled for debugging, but may slightly slow down gameplay; recommended to play without it for smoother performance
 
 ## Control Settings
 - Press Start to start the Two-player mode using both controller ports of the N64
