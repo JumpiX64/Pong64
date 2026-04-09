@@ -22,6 +22,11 @@ typedef enum {
 #define CHANNEL_SFX2    2
 #define CHANNEL_SFX4    4
 
+void rumble_tick(int *frames, joypad_port_t port) {
+    if (*frames > 0 && --(*frames) == 0)
+        joypad_set_rumble_active(port, false);
+}
+
 int main(void)
 {
     int score_p1 = 0;
@@ -31,10 +36,10 @@ int main(void)
 
     display_init(RESOLUTION_640x480, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_DISABLED);
     dfs_init(DFS_DEFAULT_LOCATION);
-    joypad_init(); 
+    joypad_init();
     timer_init();
 
-    audio_init(22050, 2); 
+    audio_init(22050, 2);  
     mixer_init(8);
     
     wav64_init_compression(3);
@@ -55,15 +60,22 @@ int main(void)
     
     wav64_t sfx_hit;
     wav64_t sfx_victory;
-    wav64_t sfx_score; 
+    wav64_t sfx_score;
     wav64_open(&sfx_hit, "rom:/hit.wav64");
     wav64_open(&sfx_victory, "rom:/victory.wav64");
     wav64_open(&sfx_score, "rom:/score.wav64");
     
     bool music_playing = false;
     bool victory_sound_played = false;
-    int rumble_p1_frames = 0; 
-    int rumble_p2_frames = 0;
+    int rumble_p1_frames = 0;
+    int rumble_p2_frames = 0;  
+    
+    bool show_fps = false;
+    uint32_t fps_counter = 0;
+    uint32_t fps_display = 0;
+    uint32_t last_fps_update = 0;
+    char fps_str[16] = "FPS: 0";
+    int fps_warn_frames = 0; 
 
     float ball_x = 75, ball_y = 100, ball_speed = 5.0f, gravity = 0.35f, bounce_factor = 1.01f;
     int ground_y = 325, top_y = 1, top_pause_frames = 0, max_top_pause = 6;
@@ -83,6 +95,13 @@ int main(void)
         joypad_poll();
         struct controller_data keys_pressed = get_keys_pressed();
         struct controller_data held = get_keys_held();
+
+        if (keys_pressed.c[0].down) {
+            show_fps = !show_fps;
+            if (show_fps) {
+                fps_warn_frames = 50;
+            }
+        }
 
         bool should_play_music = (state == STATE_TITLE || 
                                    state == STATE_RULES || 
@@ -152,12 +171,10 @@ int main(void)
                 break;
 
             case STATE_ENDLESS:
-                graphics_draw_text(disp, 250, 50, "Endless Mode");
-                graphics_draw_text(disp, 100, 150, "Coming soon!");
-                graphics_draw_text(disp, 100, 200, "Press L to return to Title");
-                graphics_draw_text(disp, 150, 250, "Highscore: ");
-                graphics_draw_text(disp, 170, 400, "Developed by JumpiX");
-
+                graphics_draw_text(disp, 250, 250, "Endless Mode");
+                graphics_draw_text(disp, 100, 300, "Coming soon!");
+                graphics_draw_text(disp, 100, 350, "Press L to return to Title");
+                graphics_draw_text(disp, 250, 400, "Highscore: ");
 
                 if (keys_pressed.c[0].L) state = STATE_TITLE;
                 break;
@@ -233,7 +250,7 @@ int main(void)
                     wav64_play(&sfx_hit, CHANNEL_SFX2);
                     if (joypad_get_rumble_supported(JOYPAD_PORT_2)) {
                         joypad_set_rumble_active(JOYPAD_PORT_2, true);
-                        rumble_p2_frames = 16;
+                        rumble_p2_frames = 16; 
                     }
                 }
 
@@ -281,24 +298,32 @@ int main(void)
                 break;
         }
 
-        if (rumble_p1_frames > 0) {
-            rumble_p1_frames--;
-            if (rumble_p1_frames == 0) {
-                joypad_set_rumble_active(JOYPAD_PORT_1, false);
-            }
-        }
-
-        if (rumble_p2_frames > 0) {
-            rumble_p2_frames--;
-            if (rumble_p2_frames == 0) {
-                joypad_set_rumble_active(JOYPAD_PORT_2, false);
-            }
-        }
+        rumble_tick(&rumble_p1_frames, JOYPAD_PORT_1);
+        rumble_tick(&rumble_p2_frames, JOYPAD_PORT_2);
 
         mixer_try_play();
+
+        fps_counter++;
+        uint32_t current_time = get_ticks();
+        
+        if (current_time - last_fps_update >= TICKS_PER_SECOND) {
+            fps_display = fps_counter;
+            fps_counter = 0;
+            last_fps_update = current_time;
+            sprintf(fps_str, "FPS: %u", (unsigned)fps_display);
+        }
+        
+        if (show_fps) {
+            graphics_draw_text(disp, 500, 400, fps_str);
+        }
+
+        if (fps_warn_frames > 0) {
+            graphics_draw_text(disp, 20, 420, "FPS display cause slowdowns!");
+            fps_warn_frames--;
+        }
+
         display_show(disp);
     }
-    
+
     return 0;
 }
-
