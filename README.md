@@ -12,6 +12,10 @@ The ROM has a resolution of 640x480 pixels and has been tested on a PAL N64 cons
 
 <img width="2278" height="1275" alt="Game" src="https://github.com/user-attachments/assets/f57a27f7-1fd9-4b26-95ad-54623a8a1476" />
 
+https://github.com/user-attachments/assets/cbb995b2-81ee-4eac-b810-dde1b12d762d
+
+
+
 ## Build
 
 Install the latest libdragon `preview` branch:
