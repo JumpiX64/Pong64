@@ -6,7 +6,6 @@
 #define SCREEN_HEIGHT           480
 #define DISPLAY_BUFFERS         2
 
-
 // Titelscreen-Ball
 #define TITLE_BALL_X_START      75.0f
 #define TITLE_BALL_Y_START      100.0f
@@ -17,7 +16,6 @@
 #define BALL_TOP_Y              1
 #define BALL_TOP_PAUSE          6
 
-
 // Ball_Gameplay
 #define BALL_START_X            320
 #define BALL_START_Y            240
@@ -26,7 +24,6 @@
 #define BALL_RIGHT_BOUND        500
 #define BALL_ANGLE_DIVISOR      10.0f
 #define BALL_SPRITE_HALF        20 
-
 
 // Paddles
 #define PADDLE_Y_START          200
@@ -38,18 +35,15 @@
 #define PADDLE_P2_X             500
 #define PADDLE_CENTER_OFFSET    30
 
-
 #define AI_SPEED_EASY           1
 #define AI_SPEED_NORMAL         4
 #define AI_SPEED_HARD           6
 #define AI_TRACKING_OFFSET      10
 
-
 // Rules
 #define WIN_SCORE               5
 #define WALL_HIT_BOOST          0.5f
 #define WALL_HIT_TRIGGER        5
-
 
 // Logo / Fade
 #define LOGO_MAX_FRAMES         60
@@ -71,7 +65,6 @@
 #define CHANNEL_SFX1            1
 #define CHANNEL_SFX2            2
 #define CHANNEL_SFX4            4
-
 
 #define JOYSTICK_DEADZONE       20
 
