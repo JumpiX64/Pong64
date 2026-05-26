@@ -17,8 +17,8 @@ typedef struct {
 
     int8_t p1_joy_y;
     int8_t p2_joy_y;
+    
 } InputState;
-
 
 void input_init(void);
 
