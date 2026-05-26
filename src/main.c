@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <libdragon.h>
-
 #include "constants.h"
 #include "video.h"
 #include "input.h"
@@ -19,18 +18,18 @@ int main(void)
     video_load_assets();
     audio_load_assets();
     GameState state = STATE_LOGO;
-    GameData  game;
+    GameData game;
     game_init(&game);
 
     bool victory_sound_played = false;
-    int  logo_frame_cnt       = 0;
+    int logo_frame_cnt = 0;
 
-    bool     show_fps        = false;
-    uint32_t fps_counter     = 0;
-    uint32_t fps_display     = 0;
+    bool show_fps = false;
+    uint32_t fps_counter = 0;
+    uint32_t fps_display = 0;
     uint32_t last_fps_update = 0;
-    int      fps_warn_frames = 0;
-    char     fps_str[FPS_STR_LEN] = "FPS: 0";
+    int fps_warn_frames = 0;
+    char fps_str[FPS_STR_LEN] = "FPS: 0";
     
     while (1)
     {
@@ -59,10 +58,10 @@ int main(void)
                 game_update_title_ball(&game);
                 video_draw_title(disp, &game);
 
-                if      (input.p1_start) { game_init(&game); state = STATE_GAME;    }
-                else if (input.p1_R)     {                   state = STATE_RULES;   }
-                else if (input.p1_Z)     {                   state = STATE_GAME2;   }
-                else if (input.p1_A)     {                   state = STATE_ENDLESS; }
+                if (input.p1_start) { game_init(&game); state = STATE_GAME; }
+                else if (input.p1_R) { state = STATE_RULES; }
+                else if (input.p1_Z) { state = STATE_GAME2; }
+                else if (input.p1_A) { state = STATE_ENDLESS; }
                 break;
 
             case STATE_RULES:
@@ -80,9 +79,10 @@ int main(void)
 
                 if (input.p1_start || input.p1_A || input.p1_B) {
                     game_init(&game);
-                    if      (input.p1_start) state = STATE_GAMEAIE;
-                    else if (input.p1_A)     state = STATE_GAMEAI;
-                    else                     state = STATE_GAMEAIR;
+                    if (input.p1_start) state = STATE_GAMEAIE;
+                    else if (input.p1_A) state = STATE_GAMEAI;
+                    else state = STATE_GAMEAIR;
+                    
                 } else if (input.p1_L) {
                     state = STATE_TITLE;
                 }
@@ -118,7 +118,7 @@ int main(void)
                 video_draw_victory(disp, game.score_p1, game.score_p2);
 
                 if (input.p1_L) {
-                    state                = STATE_TITLE;
+                    state = STATE_TITLE;
                     victory_sound_played = false;
                 }
                 break;
@@ -130,13 +130,12 @@ int main(void)
         fps_counter++;
         uint32_t now = get_ticks();
         if (now - last_fps_update >= TICKS_PER_SECOND) {
-            fps_display     = fps_counter;
-            fps_counter     = 0;
+            fps_display = fps_counter;
+            fps_counter = 0;
             last_fps_update = now;
             sprintf(fps_str, "FPS: %u", (unsigned)fps_display);
         }
         if (fps_warn_frames > 0) fps_warn_frames--;
-
         video_draw_fps(disp, show_fps, fps_warn_frames, fps_str);
         video_end_frame(disp);
     }
