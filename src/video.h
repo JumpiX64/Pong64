@@ -6,7 +6,6 @@
 #include "constants.h"
 #include "game_logic.h"
 
-
 void video_init(void);
 void video_load_assets(void);
 surface_t *video_begin_frame(void);
