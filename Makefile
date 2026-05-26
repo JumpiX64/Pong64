@@ -10,7 +10,7 @@ SRC = $(wildcard src/*.c)
 assets_png = $(wildcard assets/*.png)
 assets_wav = $(wildcard assets/*.wav)
 
-assets_conv  = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite)))
+assets_conv = $(addprefix filesystem/,$(notdir $(assets_png:%.png=%.sprite)))
 assets_conv += $(addprefix filesystem/,$(notdir $(assets_wav:%.wav=%.wav64)))
 
 MKSPRITE_FLAGS  ?=
@@ -31,20 +31,20 @@ filesystem/%.wav64: assets/%.wav
 filesystem/pong1.sprite \
 filesystem/pong2.sprite \
 filesystem/pongf.sprite \
-filesystem/lib.sprite:    MKSPRITE_FLAGS=--format RGBA16 --tiles 64,64
+filesystem/lib.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 64,64
 
 filesystem/pokal.sprite \
 filesystem/endless.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 32,32
 
-filesystem/ball.sprite:           MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
+filesystem/ball.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
 filesystem/libdragon-font.sprite: MKSPRITE_FLAGS=--format RGBA16 --tiles 16,16
 
 COMMON_AUDIOCONV = --wav-compress 1,bits=3 --wav-resample 22050 --wav-mono
 
-filesystem/menu.wav64:    AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
-filesystem/hit.wav64:     AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
+filesystem/menu.wav64: AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
+filesystem/hit.wav64: AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
 filesystem/victory.wav64: AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
-filesystem/score.wav64:   AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
+filesystem/score.wav64: AUDIOCONV_FLAGS=$(COMMON_AUDIOCONV)
 
 
 $(BUILD_DIR)/$(TARGET).dfs: $(assets_conv)
