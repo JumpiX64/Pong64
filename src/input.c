@@ -16,7 +16,7 @@ void input_poll(InputState *input)
     joypad_poll();
 
     struct controller_data pressed = get_keys_pressed();
-    struct controller_data held    = get_keys_held();
+    struct controller_data held = get_keys_held();
 
     input->p1_start = (bool)pressed.c[0].start;
     input->p1_A = (bool)pressed.c[0].A;
