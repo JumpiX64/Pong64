@@ -21,14 +21,11 @@ typedef struct {
     float title_ball_x;
     float title_ball_y;
     float title_ball_speed;
-    int   title_top_pause;
+    int title_top_pause;
 } GameData;
-
-
 
 //Sets all game values to initial state.
 void game_init(GameData *g);
-
 
  //Resets paddles and ball.direction: 1 = ball flies to the right, -1 = to the left.
 void game_reset_ball(GameData *g, int direction);
