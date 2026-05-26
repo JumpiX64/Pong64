@@ -16,15 +16,15 @@ void video_init(void)
 
 void video_load_assets(void)
 {
-    spr_font  = sprite_load("rom:/libdragon-font.sprite");
+    spr_font = sprite_load("rom:/libdragon-font.sprite");
     graphics_set_font_sprite(spr_font);
 
     spr_pong1 = sprite_load("rom:/pong1.sprite");
     spr_pong2 = sprite_load("rom:/pong2.sprite");
-    spr_ball  = sprite_load("rom:/ball.sprite");
+    spr_ball = sprite_load("rom:/ball.sprite");
     spr_pongf = sprite_load("rom:/pongf.sprite");
     spr_pokal = sprite_load("rom:/pokal.sprite");
-    spr_lib   = sprite_load("rom:/lib.sprite");
+    spr_lib = sprite_load("rom:/lib.sprite");
 }
 
 surface_t *video_begin_frame(void)
@@ -45,7 +45,7 @@ void video_draw_logo(surface_t *disp, int frame)
     graphics_draw_sprite_trans(disp, 10, 25, spr_lib);
 
     if (frame > LOGO_MAX_FRAMES) {
-        int fade  = frame - LOGO_MAX_FRAMES;
+        int fade = frame - LOGO_MAX_FRAMES;
         int alpha = (fade * ALPHA_MAX) / LOGO_FADE_DURATION;
         if (alpha > ALPHA_MAX) alpha = ALPHA_MAX;
         graphics_fill_screen(disp, 0x0);
@@ -105,14 +105,14 @@ void video_draw_game(surface_t *disp, const GameData *g)
     sprintf(score_str, "%d", g->score_p2);
     graphics_draw_text(disp, 550, 20, score_str);
 
-    graphics_draw_sprite_trans(disp, PADDLE_P1_X,       (int)g->pong1_y,    spr_pong1);
-    graphics_draw_sprite_trans(disp, PADDLE_P2_X,       (int)g->pong2_y,    spr_pong2);
+    graphics_draw_sprite_trans(disp, PADDLE_P1_X, (int)g->pong1_y, spr_pong1);
+    graphics_draw_sprite_trans(disp, PADDLE_P2_X, (int)g->pong2_y, spr_pong2);
     graphics_draw_sprite_trans(disp, (int)g->ball_game_x, (int)g->ball_game_y, spr_ball);
 }
 
 void video_draw_victory(surface_t *disp, int score_p1, int score_p2)
 {
-    if      (score_p1 >= WIN_SCORE) graphics_draw_text(disp, 220, 200, "Player 1 Wins!");
+    if (score_p1 >= WIN_SCORE) graphics_draw_text(disp, 220, 200, "Player 1 Wins!");
     else if (score_p2 >= WIN_SCORE) graphics_draw_text(disp, 220, 200, "Player 2 Wins!");
 
     graphics_draw_sprite_trans(disp, 320, 150, spr_pokal);
