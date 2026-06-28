@@ -19,8 +19,8 @@ void audio_system_init(void)
 
 void audio_load_assets(void)
 {
-	wav64_set_loop(&title_music, true);
     wav64_open(&title_music, "rom:/menu.wav64");
+    wav64_set_loop(&title_music, true);
     wav64_open(&sfx_hit, "rom:/hit.wav64");
     wav64_open(&sfx_victory, "rom:/victory.wav64");
     wav64_open(&sfx_score, "rom:/score.wav64");
@@ -37,6 +37,7 @@ void audio_update_music(GameState state)
         wav64_play(&title_music, CHANNEL_MUSIC);
         mixer_ch_set_vol(CHANNEL_MUSIC, MUSIC_VOLUME, MUSIC_VOLUME);
         music_playing = true;
+        
     } else if (!should_play && music_playing) {
         mixer_ch_stop(CHANNEL_MUSIC);
         music_playing = false;
