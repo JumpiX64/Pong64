@@ -22,8 +22,7 @@ filesystem/pong2.sprite \
 filesystem/pongf.sprite \
 filesystem/lib.sprite: MKSPRITE_FLAGS = $(MKSPRITE64)
 
-filesystem/pokal.sprite \
-filesystem/endless.sprite: MKSPRITE_FLAGS = $(MKSPRITE32)
+filesystem/pokal.sprite: MKSPRITE_FLAGS = $(MKSPRITE32)
 
 filesystem/ball.sprite \
 filesystem/libdragon-font.sprite: MKSPRITE_FLAGS = $(MKSPRITE16)
